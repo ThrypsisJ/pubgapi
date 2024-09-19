@@ -1,3 +1,5 @@
 apikey
 samples
 **/.DS_Store
+**/*.egg-info
+dist

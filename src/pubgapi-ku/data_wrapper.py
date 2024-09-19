@@ -1,6 +1,6 @@
 """Wrap response data into other data types which are easy to handle"""
 import pandas as pd
-from pubgapi.api_connector import Connector
+from api_connector import Connector
 
 class DataWrapper():
     """Data wrapper class"""
