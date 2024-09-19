@@ -42,7 +42,7 @@ class Connector:
         Get players information
 
         [Keyword arguments]
-        ids:list[str] |-> filters by player IDs
+        ids:list[str]   |-> filters by player IDs
         names:list[str] |-> filters by player names
 
         [Return]

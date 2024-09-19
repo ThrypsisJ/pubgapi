@@ -51,6 +51,10 @@ class DataWrapper():
         """
         Get a dataframe containing matches and corresponding players to each match
 
+        [Keyword arguments]
+        ids:list[str]   |-> filters by player IDs
+        names:list[str] |-> filters by player names
+
         [Return]
         pd.DataFrame |-> Successfully extracted player-match relations
         None         |-> Fail signal
@@ -60,19 +64,45 @@ class DataWrapper():
         if isinstance(data, dict):
             player_datas = []
             for player in data['data']:
-                if not player['attributes']['banType'] == 'Innocent':
-                    continue
                 player_id = player['id']
                 player_name = player['attributes']['name']
+                player_bantype = player['attributes']['banType']
 
                 for match in player['relationships']['matches']['data']:
                     if match['type'] == 'match':
                         match_info = {
                             'accountId': player_id,
                             'playerName': player_name,
+                            'banType': player_bantype,
                             'matchId': match['id']
                         }
                         player_datas.append(match_info)
             return pd.DataFrame(player_datas)
+        else:
+            return None
+
+    def get_match_data(self, match_id:str) -> tuple[dict, dict]|None:
+        """
+        Get a dataframe containing a match's metadata and the address of telemetry file
+
+        [Argument]
+        match_id:str |-> target match's id
+
+        [Return]
+        tuple[dict, dict] |-> Successfully acquired match and telemetry data
+        None              |-> Fail signal
+        """
+
+        match_data:dict|None = self.conn.match(match_id)
+        if isinstance(match_data, dict):
+            telemetry_addr:str|None = self.conn.telemetry_addr(match_data)
+            if not isinstance(telemetry_addr, str):
+                return None
+
+            telemetry_data:dict|None = self.conn.get_telemetry(telemetry_addr)
+            if not isinstance(telemetry_data, dict):
+                return None
+            else:
+                return match_data, telemetry_data
         else:
             return None
