@@ -23,30 +23,30 @@ conn = Connector(<your_api_key>)
 sample_matches = conn.sample_matches()
 ```
 ##### Functions
-- <img src='./docs/images/fn_sample_matches.png' height=32px align=center></img>
+- <img src='https://github.com/ThrypsisJ/pubgapi/blob/main/docs/images/fn_get_telemetry.png?raw=true' height=32px align=center></img>
 Return a dictionary(dict)-type containing a list of sample matches within 24 hours in UTC
 When the API request was not successful (the response code was not 200), the function returns <i>None</i>
 
-- <img src='./docs/images/fn_players.png' height=32px align=center></img>
+- <img src='https://github.com/ThrypsisJ/pubgapi/blob/main/docs/images/fn_players.png?raw=true' height=32px align=center></img>
 Return a dictionary-type value containing players information
 When the API request was not successful (the response code was not 200), the function returns <i>None</i>
     - Keyword arguments
         - <code><b>ids:list[str]</b></code> Filters by player IDs
         - <code><b>names:list[str]</b></code> Filters by player names
 
-- <img src='./docs/images/fn_matches.png' height=32px align=center></img>
+- <img src='https://github.com/ThrypsisJ/pubgapi/blob/main/docs/images/fn_matches.png?raw=true' height=32px align=center></img>
 Return a dictionary-type value containing a match's information
 When the API request was not successful (the response code was not 200), the function returns <i>None</i>
     - Argument
         - <code><b>match_id:str</b></code> The ID of the match for which you want to collect information
 
-- <img src='./docs/images/fn_telemetry_addr.png' height=32px align=center></img>
+- <img src='https://github.com/ThrypsisJ/pubgapi/blob/main/docs/images/fn_telemetry_addr.png?raw=true' height=32px align=center></img>
 Return the address of telemetry data of a match from the match's data
 When the address of telemetry data was not found, the function return <i>None</i>
     - Argument
         - <code><b>match_data:dict</b></code> A match data which is obtained from <i>match</i> function
 
-- <img src='./docs/images/fn_get_telemetry.png' height=32px align=center></img>
+- <img src='https://github.com/ThrypsisJ/pubgapi/blob/main/docs/images/fn_get_telemetry.png?raw=true' height=32px align=center></img>
 Return a dictionary-type value containing a match's telemetry data of the target match
 When the request was not successful (the response code was not 200), the function returns <i>None</i>
     - Argument
