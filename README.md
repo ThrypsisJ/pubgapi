@@ -27,30 +27,30 @@ sample_matches = conn.sample_matches()
 Return a dictionary(dict)-type containing a list of sample matches within 24 hours in UTC
 When the API request was not successful (the response code was not 200), the function returns <i>None</i>
 
-- <code style='background-color:#ffff99'><b>players(self, \*\*kargs) -> dict|None</b></code>
+- <img src='./docs/images/fn_players.png' height=32px align=center></img>
 Return a dictionary-type value containing players information
 When the API request was not successful (the response code was not 200), the function returns <i>None</i>
     - Keyword arguments
-        - <code style='background-color:transparent; color:purple'><b>ids:list[str]</b></code> Filters by player IDs
-        - <code style='background-color:transparent; color:purple'><b>names:list[str]</b></code> Filters by player names
+        - <code><b>ids:list[str]</b></code> Filters by player IDs
+        - <code><b>names:list[str]</b></code> Filters by player names
 
-- <code style='background-color:#ffff99'><b>match(self, match_id:str) -> dict|None</b></code>
+- <img src='./docs/images/fn_matches.png' height=32px align=center></img>
 Return a dictionary-type value containing a match's information
 When the API request was not successful (the response code was not 200), the function returns <i>None</i>
     - Argument
-        - <code style='background-color:transparent; color:purple'><b>match_id:str</b></code> The ID of the match for which you want to collect information
+        - <code><b>match_id:str</b></code> The ID of the match for which you want to collect information
 
-- <code style='background-color:#ffff99'><b>telemetry_addr(self, match_data:dict) -> str|None</b></code>
+- <img src='./docs/images/fn_telemetry_addr.png' height=32px align=center></img>
 Return the address of telemetry data of a match from the match's data
 When the address of telemetry data was not found, the function return <i>None</i>
     - Argument
-        - <code style='background-color:transparent; color:purple'><b>match_data:dict</b></code> A match data which is obtained from <i>match</i> function
+        - <code><b>match_data:dict</b></code> A match data which is obtained from <i>match</i> function
 
-- <code style='background-color:#ffff99'><b>get_telemetry(self, addr:str) -> dict|None</b></code>
+- <img src='./docs/images/fn_get_telemetry.png' height=32px align=center></img>
 Return a dictionary-type value containing a match's telemetry data of the target match
 When the request was not successful (the response code was not 200), the function returns <i>None</i>
     - Argument
-        - <code style='background-color:transparent; color:purple'><b>addr:str</b></code> The address of the target telemetry data obtained from <i>telemetry_addr</i> function
+        - <code><b>addr:str</b></code> The address of the target telemetry data obtained from <i>telemetry_addr</i> function
 
 #### 2. Data Wrapper
 The module contains <b>DataWrapper</b> class, which has functions to get PUBG data from <i>PUBG API</i> as <i>Pandas DataFrame</i> data type
