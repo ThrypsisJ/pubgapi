@@ -29,6 +29,7 @@ sample_matches = conn.sample_matches()
 Return a dictionary(dict)-type containing a list of sample matches within 24 hours in UTC
 When the API request was not successful (the response code was not 200), the function returns *None*
 <br/>
+
 - **players(self, \*\*kargs) -> dict|None**
 Return a dictionary-type value containing players information
 When the API request was not successful (the response code was not 200), the function returns *None*
@@ -36,18 +37,21 @@ When the API request was not successful (the response code was not 200), the fun
         - **ids:list[str]** &nbsp; Filters by player IDs
         - **names:list[str]** &nbsp; Filters by player names
 <br/>
+
 - **match(self, match_id:str) -> dict|None**
 Return a dictionary-type value containing a match's information
 When the API request was not successful (the response code was not 200), the function returns *None*
     - Argument
         - **match_id:str** &nbsp; The ID of the match for which you want to collect information
 <br/>
+
 - **telemetry_addr(self, match_data:dict) -> str|None**
 Return the address of telemetry data of a match from the match's data
 When the address of telemetry data was not found, the function return *None*
     - Argument
         - **match_data:dict** &nbsp; A match data which is obtained from *match* function
 <br/>
+
 - **get_telemetry(self, addr:str) -> dict|None**
 Return a dictionary-type value containing a match's telemetry data of the target match
 When the request was not successful (the response code was not 200), the function returns *None*
