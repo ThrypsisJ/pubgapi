@@ -15,7 +15,7 @@ All data which can be collected using this module can also be collected by the <
 Therefore, there is no need to necessarily use <b>API Connector</b> module and <b>Connector</b> class in most cases.
 
 ##### Usage
-To use <b>Connector** class</b>, you must generate a <i>PUBG API key</i>. Refer instruction of <i>PUBG Developer Portal</i> (https://documentation.pubg.com/en/getting-started.html)
+To use <b>Connector</b> class, you must generate a <i>PUBG API key</i>. Refer instruction of <i>PUBG Developer Portal</i> (https://documentation.pubg.com/en/getting-started.html)
 ```Python
 from pubgapiku import api_connector
 
@@ -23,7 +23,7 @@ conn = Connector(<your_api_key>)
 sample_matches = conn.sample_matches()
 ```
 ##### Functions
-- <code style='background-color:#ffff99'><b>sample_matches(self) -> dict|None</b></code>
+- <code>$\color{blue}\tt{sample\_matches(self) \rightarrow dict|None}$</code>
 Return a dictionary(dict)-type containing a list of sample matches within 24 hours in UTC
 When the API request was not successful (the response code was not 200), the function returns <i>None</i>
 
