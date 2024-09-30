@@ -1,23 +1,21 @@
 # PUBG API Wrapper for Pandas
 This package is under development; thus, some features may not work correctly or exist.
-<br/>
 
 ## Installation
 You can install this module using pip (pip3)
 ```bash
 pip install pubgapi-ku
 ```
-<br/>
 
 ## Components
 ### Modules
 #### 1. API Connector
-The module contains **Connector** class which has functions to get raw JSON data using *PUBG API* provided by *PUBG Developer Portal* (https://developer.pubg.com/).
-All data which can be collected using this module can also be collected by the **DataWrapper** class, which provides data as *Pandas DataFrame* type using **Connector** class internally.
-Therefore, there is no need to necessarily use **API Connector** module and **Connector** class in most cases.
+The module contains <b>Connector</b> class which has functions to get raw JSON data using <i>PUBG API</i> provided by <i>PUBG Developer Portal</i> (https://developer.pubg.com/).
+All data which can be collected using this module can also be collected by the <b>DataWrapper</b> class, which provides data as <i>Pandas DataFrame</i> type using <b>Connector</b> class internally.
+Therefore, there is no need to necessarily use <b>API Connector</b> module and <b>Connector</b> class in most cases.
 
 ##### Usage
-To use **Connector** class, you must generate a *PUBG API key*. Refer instruction of *PUBG Developer Portal* (https://documentation.pubg.com/en/getting-started.html)
+To use <b>Connector** class</b>, you must generate a <i>PUBG API key</i>. Refer instruction of <i>PUBG Developer Portal</i> (https://documentation.pubg.com/en/getting-started.html)
 ```Python
 from pubgapiku import api_connector
 
@@ -25,43 +23,38 @@ conn = Connector(<your_api_key>)
 sample_matches = conn.sample_matches()
 ```
 ##### Functions
-- **sample_matches(self) -> dict|None**
+- <span style='background-color:#ffff99'><b>sample_matches(self) -> dict|None</b></span>
 Return a dictionary(dict)-type containing a list of sample matches within 24 hours in UTC
-When the API request was not successful (the response code was not 200), the function returns *None*
-<br/>
+When the API request was not successful (the response code was not 200), the function returns <i>None</i>
 
-- **players(self, \*\*kargs) -> dict|None**
+- <span style='background-color:#ffff99'><b>players(self, \*\*kargs) -> dict|None</b></span>
 Return a dictionary-type value containing players information
-When the API request was not successful (the response code was not 200), the function returns *None*
+When the API request was not successful (the response code was not 200), the function returns <i>None</i>
     - Keyword arguments
-        - **ids:list[str]** &nbsp; Filters by player IDs
-        - **names:list[str]** &nbsp; Filters by player names
-<br/>
+        - <b>ids:list[str]</b> &nbsp; Filters by player IDs
+        - <b>names:list[str]</b> &nbsp; Filters by player names
 
-- **match(self, match_id:str) -> dict|None**
+- <span style='background-color:#ffff99'><b>match(self, match_id:str) -> dict|None</b></span>
 Return a dictionary-type value containing a match's information
-When the API request was not successful (the response code was not 200), the function returns *None*
+When the API request was not successful (the response code was not 200), the function returns <i>None</i>
     - Argument
-        - **match_id:str** &nbsp; The ID of the match for which you want to collect information
-<br/>
+        - <b>match_id:str</b> &nbsp; The ID of the match for which you want to collect information
 
-- **telemetry_addr(self, match_data:dict) -> str|None**
+- <span style='background-color:#ffff99'><b>telemetry_addr(self, match_data:dict) -> str|None</b></span>
 Return the address of telemetry data of a match from the match's data
-When the address of telemetry data was not found, the function return *None*
+When the address of telemetry data was not found, the function return <i>None</i>
     - Argument
-        - **match_data:dict** &nbsp; A match data which is obtained from *match* function
-<br/>
+        - <b>match_data:dict</b> &nbsp; A match data which is obtained from <i>match</i> function
 
-- **get_telemetry(self, addr:str) -> dict|None**
+- <span style='background-color:#ffff99'><b>get_telemetry(self, addr:str) -> dict|None</b></span>
 Return a dictionary-type value containing a match's telemetry data of the target match
-When the request was not successful (the response code was not 200), the function returns *None*
+When the request was not successful (the response code was not 200), the function returns <i>None</i>
     - Argument
-        - **addr:str** &nbsp; The address of the target telemetry data obtained from *telemetry_addr* function
-<br/>
+        - <b>addr:str</b> &nbsp; The address of the target telemetry data obtained from <i>telemetry_addr</i> function
 
 #### 2. Data Wrapper
-The module contains **DataWrapper** class, which has functions to get PUBG data from *PUBG API* as *Pandas DataFrame* data type
-Since **DataWrapper** class works based on **Collector** class, a PUBG API key is also needed to use **DataWrapper** class
+The module contains <b>DataWrapper</b> class, which has functions to get PUBG data from <i>PUBG API</i> as <i>Pandas DataFrame</i> data type
+Since <b>DataWrapper</b> class works based on <b>Collector</b> class, a PUBG API key is also needed to use <b>DataWrapper</b> class
 
 ##### Usage
 ##### Functions
