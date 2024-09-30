@@ -93,7 +93,7 @@ class Connector:
         Get the address of telemetry data from a match data
 
         [Argument]
-        match_data:dict |-> A match data which is obtained through the match function
+        match_data:dict |-> A match data which is obtained through *match* function
 
         [Return]
         str |-> The address of the match's telemetry data
