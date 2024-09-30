@@ -3,7 +3,9 @@ import requests
 
 class Connector:
     """API Request sender class"""
-    def __init__(self, api_key:str, timeout:int):
+    def __init__(self, api_key:str, timeout:int=1):
+        """
+        """
         self.timeout:int = timeout
         self.api_base:str = "https://api.pubg.com/shards/steam/"
         self.header:dict = {
