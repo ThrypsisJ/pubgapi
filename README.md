@@ -23,7 +23,7 @@ conn = Connector(<your_api_key>)
 sample_matches = conn.sample_matches()
 ```
 ##### Functions
-- ![sample_matches]('./docs/images/fn_sample_matches.png)
+- <img src='./docs/images/fn_sample_matches.png' height=32px align=center></img>
 Return a dictionary(dict)-type containing a list of sample matches within 24 hours in UTC
 When the API request was not successful (the response code was not 200), the function returns <i>None</i>
 
