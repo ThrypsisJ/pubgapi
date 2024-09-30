@@ -23,30 +23,30 @@ conn = Connector(<your_api_key>)
 sample_matches = conn.sample_matches()
 ```
 ##### Functions
-- <span style='background-color:#ffff99'><b>sample_matches(self) -> dict|None</b></span>
+- <code style='background-color:#ffff99'><b>sample_matches(self) -> dict|None</b></code>
 Return a dictionary(dict)-type containing a list of sample matches within 24 hours in UTC
 When the API request was not successful (the response code was not 200), the function returns <i>None</i>
 
-- <span style='background-color:#ffff99'><b>players(self, \*\*kargs) -> dict|None</b></span>
+- <code style='background-color:#ffff99'><b>players(self, \*\*kargs) -> dict|None</b></code>
 Return a dictionary-type value containing players information
 When the API request was not successful (the response code was not 200), the function returns <i>None</i>
     - Keyword arguments
         - <b>ids:list[str]</b> &nbsp; Filters by player IDs
         - <b>names:list[str]</b> &nbsp; Filters by player names
 
-- <span style='background-color:#ffff99'><b>match(self, match_id:str) -> dict|None</b></span>
+- <code style='background-color:#ffff99'><b>match(self, match_id:str) -> dict|None</b></code>
 Return a dictionary-type value containing a match's information
 When the API request was not successful (the response code was not 200), the function returns <i>None</i>
     - Argument
         - <b>match_id:str</b> &nbsp; The ID of the match for which you want to collect information
 
-- <span style='background-color:#ffff99'><b>telemetry_addr(self, match_data:dict) -> str|None</b></span>
+- <code style='background-color:#ffff99'><b>telemetry_addr(self, match_data:dict) -> str|None</b></code>
 Return the address of telemetry data of a match from the match's data
 When the address of telemetry data was not found, the function return <i>None</i>
     - Argument
         - <b>match_data:dict</b> &nbsp; A match data which is obtained from <i>match</i> function
 
-- <span style='background-color:#ffff99'><b>get_telemetry(self, addr:str) -> dict|None</b></span>
+- <code style='background-color:#ffff99'><b>get_telemetry(self, addr:str) -> dict|None</b></code>
 Return a dictionary-type value containing a match's telemetry data of the target match
 When the request was not successful (the response code was not 200), the function returns <i>None</i>
     - Argument
