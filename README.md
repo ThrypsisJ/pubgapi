@@ -15,7 +15,7 @@ The instruction assumes that you already installed the required tools.
 ##### 1. Install after build
 ```bash
 python -m build
-pip install ./dist/pubgapi_ku-0.17.3-py3-none-any.whl
+pip install ./dist/pubgapi_ku-0.17.4-py3-none-any.whl
 ```
 
 ##### 2. Install without build

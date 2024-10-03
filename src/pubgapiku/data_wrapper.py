@@ -134,9 +134,11 @@ class DataWrapper():
             event['subject'] = '-'
             event['co_actor'] = '-'
 
-            actor_keys = ('character', 'attacker', 'instigator', 'finisher', 'reviver')
+            actor_keys = ('character', 'attacker', 'instigator', 'finisher', 'killer', 'reviver')
             for actor_key in actor_keys:
                 if actor_key in event_data:
+                    if event_data[actor_key] is None:
+                        continue
                     event['actor'] = event_data[actor_key]['accountId']
 
             coactor_keys = ('riders', 'fellowPassengers')
