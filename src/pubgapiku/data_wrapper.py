@@ -145,7 +145,7 @@ class DataWrapper():
                     if len(event_data[coactor_key]) < 1:
                         continue
                     event['co_actor'] = ','.join([
-                        coactor['account_id'] for coactor in event_data[coactor_key]
+                        coactor['accountId'] for coactor in event_data[coactor_key]
                     ])
             if 'assists_AccountId' in event_data:
                 event['co_actor'] = ','.join(event_data['assists_AccountId'])
