@@ -2,9 +2,26 @@
 This package is under development; thus, some features may not work correctly or exist.   
 
 ## Installation
-You can install this module using pip (pip3).   
+#### Using PyPI
+You can download this project from PyPI using pip (pip3).   
 ```bash
 pip install pubgapi-ku
+```
+
+#### Install directly from the source code
+You can also install this project directly from the source code. In this case, you need to install ***setuptools***.   
+The instruction assumes that you already installed the required tools.
+
+##### 1. Install after build
+```bash
+python -m build
+pip install ./dist/pubgapi_ku-0.16.2-py3-none-any.whl
+```
+
+##### 2. Install without build
+```bash
+pip install . # Normal mode
+pip install -e . # Development mode
 ```
 
 ## Modules
