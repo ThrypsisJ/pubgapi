@@ -118,7 +118,7 @@ class DataWrapper():
                     ]
                 }
         participants = pd.DataFrame(participants)
-        for rid, rdata in rosters:
+        for rid, rdata in rosters.items():
             pfilter = participants['id'].isin(rdata['participants'])
             participants.loc[pfilter, 'teamId'] = rid
             participants.loc[pfilter, 'teamRank'] = rdata['rank']
@@ -142,6 +142,8 @@ class DataWrapper():
             coactor_keys = ('riders', 'fellowPassengers')
             for coactor_key in coactor_keys:
                 if coactor_key in event_data:
+                    if len(event_data[coactor_key]) < 1:
+                        continue
                     event['co_actor'] = ','.join([
                         coactor['account_id'] for coactor in event_data[coactor_key]
                     ])
