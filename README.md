@@ -27,9 +27,9 @@ sample_matches:dict = conn.sample_matches()
 Initialize API request sender
 
 ##### Arguments
-***`api_key:str`*** An API key of the PUBG Developer Portal
-***`platform:PLATFORM`*** Target platform to collect data (steam, kakao, console, psn, stadia, tournament, xbox)
-***`timeout:int`*** Timeout limitation (sec), default=1
+***`api_key:str`*** An API key of the PUBG Developer Portal   
+***`platform:PLATFORM`*** Target platform to collect data (steam, kakao, console, psn, stadia, tournament, xbox)   
+***`timeout:int`*** Timeout limitation (sec), default=1   
 &nbsp;
 
 > ***sample_matches*** *(self, date_filter:str='') -> dict*
