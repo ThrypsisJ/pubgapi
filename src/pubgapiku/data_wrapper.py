@@ -1,10 +1,10 @@
 """Wrap response data into other data types which are easy to handle"""
 import pandas as pd
-from api_connector import Connector
+from pubgapiku.api_connector import Connector
 
 class DataWrapper():
     """Data wrapper class"""
-    def __init__(self, api_key:str, timeout:int):
+    def __init__(self, api_key:str, timeout:int=1):
         self.conn = Connector(api_key, timeout)
 
     def get_sample_matches(self) -> list|None:
@@ -80,10 +80,57 @@ class DataWrapper():
             return pd.DataFrame(player_datas)
         else:
             return None
+        
+    def __parse_match(self, match_data:dict) -> tuple[dict, pd.DataFrame]:
+        '''
+        Parse a metadata and participants data from a match data
+
+        [Arguments]
+        match_data:dict |-> A match data in dictionary type
+
+        [Return]
+        tuple[dict, pd.DataFrame] |-> Extracted metadata in dictionary type, and a DataFrame of participants data
+        '''
+        meta_data = {
+            'id': match_data['data']['id'],
+            'created': match_data['data']['attributes']['createdAt'],
+            'mode': match_data['data']['attributes']['gameMode'],
+            'map': match_data['data']['attributes']['mapName'],
+            'duration': match_data['data']['attributes']['duration']
+        }
+        participants = []
+        rosters = {}
+        for included in match_data['included']:
+            if included['type'] == 'participant':
+                stats = list(included['attributes']['stats'].keys())
+                player_data = {
+                    key: included['attributes']['stats'][key] for key in stats
+                }
+                player_data['id'] = included['id']
+                player_data['teamId'] = ''
+                player_data['teamRank'] = 0
+                participants.append(player_data)
+            elif included['type'] == 'roster':
+                rosters[included['id']] = {
+                    'rank': included['attributes']['stats']['rank'],
+                    'participants': [
+                        player['id'] for player
+                        in included['relationships']['participants']['data']
+                    ]
+                }
+        participants = pd.DataFrame(participants)
+        for rid, rdata in rosters:
+            pfilter = participants['id'].isin(rdata['participants'])
+            participants.loc[pfilter, 'teamId'] = rid
+            participants.loc[pfilter, 'teamRank'] = rdata['rank']
+        return meta_data, participants
+
+    def __parse_telemetry(self, telemetry_data:list) -> pd.DataFrame:
+        
 
     def get_match_data(self, match_id:str) -> tuple[dict, dict]|None:
         """
-        Get a dataframe containing a match's metadata and the address of telemetry file
+        Get a tuple of dataframe containing a match's metadata and the address of telemetry file
 
         [Argument]
         match_id:str |-> target match's id
@@ -98,11 +145,12 @@ class DataWrapper():
             telemetry_addr:str|None = self.conn.telemetry_addr(match_data)
             if not isinstance(telemetry_addr, str):
                 return None
-
+            
             telemetry_data:dict|None = self.conn.get_telemetry(telemetry_addr)
             if not isinstance(telemetry_data, dict):
                 return None
-            else:
-                return match_data, telemetry_data
+            
+            meta_data, participants = self.__parse_match(match_data)
+            return , telemetry_data
         else:
             return None

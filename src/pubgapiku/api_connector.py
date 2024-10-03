@@ -1,13 +1,24 @@
 """KRAFTON API Request sender"""
+from datetime import datetime
+from typing import Literal
 import requests
+
+PLATFORM = Literal['steam', 'kakao', 'console', 'psn', 'stadia', 'touranment', 'xbox']
 
 class Connector:
     """API Request sender class"""
-    def __init__(self, api_key:str, timeout:int=1):
+    def __init__(self, api_key:str, platform:PLATFORM, timeout:int=1):
         """
+        Initialize API request sender
+
+        [Arguments]
+        api_key:str        |-> An API key of the PUBG Developer Portal
+        platform:PLATFORM  |-> Target platform to collect data
+                               (steam, kakao, console, psn, stadia, tournament, xbox)
+        timeout:int        |-> Timeout limitation (sec)
         """
         self.timeout:int = timeout
-        self.api_base:str = "https://api.pubg.com/shards/steam/"
+        self.api_base:str = f"https://api.pubg.com/shards/{platform}"
         self.header:dict = {
             'Authorization': f'Bearer {api_key}',
             'Accept': 'application/vnd.api+json'
@@ -15,31 +26,51 @@ class Connector:
         self.header_nokey:dict = {
             'Accept': 'application/vnd.api+json'
         }
-        self.err_stats = (401, 404, 415, 429)
 
-    def err_check(self, response:requests.Response) -> dict|None:
+    def __chk_err(self, response:requests.Response) -> dict|list:
         """
-        Check the status code of the response and return None or Dictionarized response
+        Check the status code of the response
+        If the status code is not 200, the function raises an assertion error
 
         [Arguments]
         response:requests.Response |-> target response to check
 
         [Return]
-        dict |-> When the status code of the response is 200
-        None |-> When the response status code is one of the elements of <self.err_stats> tuple
+        json |-> When the status code of the response is 200
         """
-        if response.status_code in self.err_stats:
-            return None
-        else:
-            return response.json()
+        assert response.status_code == 200,\
+            'Got a response with bad status code'
+        return response.json()
 
-    def sample_matches(self) -> dict|None:
-        """Get sample match list"""
-        api = self.api_base + '/samples'
+    def __chk_cls_str(self, subject:object, tgt_class:type) -> str:
+        return f'Inappropriate data type received ({type(subject)}). It must be {tgt_class}'
+
+    def sample_matches(self, date_filter:str='') -> dict:
+        """
+        Get sample match list
+
+        [Arguments]
+        filter  |-> Target date to collect sample matches (YYYYMMDD), optional
+
+        [Return]
+        dict |-> A json response which includes a list of sample matches within
+        """
+
+        if date_filter != '':
+            try:
+                dt:datetime = datetime.strptime(date_filter, '%Y%m%d')
+            except ValueError as exc:
+                warning:str = 'Invalid date format. It should be YYYYMMDD (without dashes).'
+                raise ValueError(warning) from exc
+            date_filter = f'?filter[createdAt-start]={dt.strftime("%Y-%m-%dT%H%%3A%M%%3A%SZ")}'
+
+        api = f'{self.api_base}/samples{date_filter}'
         response:requests.Response = requests.get(api, headers=self.header, timeout=self.timeout)
-        return self.err_check(response)
+        output = self.__chk_err(response)
+        assert isinstance(output, dict), self.__chk_cls_str(output, dict)
+        return output
 
-    def players(self, **kargs) -> dict|None:
+    def players(self, **kargs) -> dict:
         """
         Get players information
 
@@ -48,8 +79,7 @@ class Connector:
         names:list[str] |-> filters by player names
 
         [Return]
-        dict |-> When it gets a proper response from the request
-        None |-> Whenever it gets an error, improper response or wrong input keyword arguments
+        dict |-> A json response which includes target players' information
         """
 
         fil_by_id:bool = ('ids' in kargs) and (len(kargs['ids']) > 0)
@@ -61,17 +91,17 @@ class Connector:
         if fil_by_id:
             filter_:str = 'playerIds'
             filter_elements:str = ','.join(kargs['ids'])
-        elif fil_by_name:
+        else:
             filter_:str = 'playerNames'
             filter_elements:str = ','.join(kargs['names'])
-        else:
-            return None
 
         api:str = self.api_base + f'/players?filter[{filter_}]={filter_elements}'
         response:requests.Response = requests.get(api, headers=self.header, timeout=self.timeout)
-        return self.err_check(response)
+        output = self.__chk_err(response)
+        assert isinstance(output, dict), self.__chk_cls_str(output, dict)
+        return output
 
-    def match(self, match_id:str) -> dict|None:
+    def match(self, match_id:str) -> dict:
         """
         Get a match's information
 
@@ -79,16 +109,17 @@ class Connector:
         match_id:str |-> target match's ID
 
         [Return]
-        dict |-> When it gets a proper response from the request
-        None |-> Whenever it gets an error, improper response
+        dict |-> A json response which includes target match's information
         """
         api = self.api_base + f'/matches/{match_id}'
         response:requests.Response = requests.get(
             api, headers=self.header_nokey, timeout=self.timeout
         )
-        return self.err_check(response)
+        output = self.__chk_err(response)
+        assert isinstance(output, dict), self.__chk_cls_str(output, dict)
+        return output
 
-    def telemetry_addr(self, match_data:dict) -> str|None:
+    def telemetry_addr(self, match_data:dict) -> str:
         """
         Get the address of telemetry data from a match data
 
@@ -98,13 +129,16 @@ class Connector:
         [Return]
         str |-> The address of the match's telemetry data
         """
+        output = None
         included:list[dict] = match_data['included']
         for item in included:
             if item['type'] == 'asset':
-                return item['attributes']['URL']
-        return None
+                output = item['attributes']['URL']
+                break
+        assert isinstance(output, str), 'Failed to search the address of telemetry data'
+        return output
 
-    def get_telemetry(self, addr:str) -> dict|None:
+    def get_telemetry(self, addr:str) -> list:
         """
         Get telemetry data of a match
 
@@ -112,9 +146,11 @@ class Connector:
         addr:str |-> The address of the telemetry data
 
         [Return]
-        str |-> The address of the match's telemetry data
+        list |-> The target match's telemetry data
         """
         response:requests.Response = requests.get(
             addr, headers=self.header_nokey, timeout=self.timeout
         )
-        return self.err_check(response)
+        output = self.__chk_err(response)
+        assert isinstance(output, list), self.__chk_cls_str(output, list)
+        return output

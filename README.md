@@ -7,54 +7,110 @@ You can install this module using pip (pip3)
 pip install pubgapi-ku
 ```
 
-## Components
-### Modules
-#### 1. API Connector
+## Modules
+### 1. API Connector
 The module contains <b>Connector</b> class which has functions to get raw JSON data using <i>PUBG API</i> provided by <i>PUBG Developer Portal</i> (https://developer.pubg.com/).
 All data which can be collected using this module can also be collected by the <b>DataWrapper</b> class, which provides data as <i>Pandas DataFrame</i> type using <b>Connector</b> class internally.
 Therefore, there is no need to necessarily use <b>API Connector</b> module and <b>Connector</b> class in most cases.
 
-##### Usage
+#### Usage
 To use <b>Connector</b> class, you must generate a <i>PUBG API key</i>. Refer instruction of <i>PUBG Developer Portal</i> (https://documentation.pubg.com/en/getting-started.html)
 ```Python
-from pubgapiku import api_connector
+from pubgapiku.api_connector import Connector
 
-conn = Connector(<your_api_key>)
-sample_matches = conn.sample_matches()
+conn = Connector(<your_api_key>, <platform>)
+sample_matches:dict = conn.sample_matches()
 ```
-##### Functions
-- <img src='https://github.com/ThrypsisJ/pubgapi/blob/main/docs/images/fn_get_telemetry.png?raw=true' height=32px align=center></img>
+#### Functions
+<font size=4>***```__init__(self, api_key:str, platform:PLATFORM, timeout:int=1)```***</font>
+
+Initialize API request sender
+
+<font size=2>
+
+|Argument|Description|
+|---|---|
+|***api_key:str***|An API key of the PUBG Developer Portal|
+|***platform:PLATFORM***|Target platform to collect data (steam, kakao, console, psn, stadia, tournament, xbox)|
+|***timeout:int***|Timeout limitation (sec), default=1|
+
+</font>
+<br/>
+
+<font size=4>***```sample_matches(self) -> dict```***</font>
+
 Return a dictionary(dict)-type containing a list of sample matches within 24 hours in UTC
 When the API request was not successful (the response code was not 200), the function returns <i>None</i>
+<br/>
 
-- <img src='https://github.com/ThrypsisJ/pubgapi/blob/main/docs/images/fn_players.png?raw=true' height=32px align=center></img>
+<font size=4>***```players(self, **kargs) -> dict```***</code></font>
+
 Return a dictionary-type value containing players information
 When the API request was not successful (the response code was not 200), the function returns <i>None</i>
-    - Keyword arguments
-        - <code><b>ids:list[str]</b></code> Filters by player IDs
-        - <code><b>names:list[str]</b></code> Filters by player names
 
-- <img src='https://github.com/ThrypsisJ/pubgapi/blob/main/docs/images/fn_matches.png?raw=true' height=32px align=center></img>
+<font size=2>
+
+|Keyword Argument|Description|
+|---|---|
+|***ids:list[str]***|Filters by player IDs|
+|***names:list[str]***|Filters by player names|
+
+</font>
+<br/>
+
+<font size=4>***```match(self, match_id:str) -> dict```***</font>
+
 Return a dictionary-type value containing a match's information
 When the API request was not successful (the response code was not 200), the function returns <i>None</i>
-    - Argument
-        - <code><b>match_id:str</b></code> The ID of the match for which you want to collect information
 
-- <img src='https://github.com/ThrypsisJ/pubgapi/blob/main/docs/images/fn_telemetry_addr.png?raw=true' height=32px align=center></img>
+<font size=2>
+
+|Argument|Description|
+|---|---|
+|***match_id:str***|The ID of the match for which you want to collect information|
+
+</font>
+<br/>
+
+<font size=4>***```telemetry_addr(self, match_data:dict) -> str```***</font>
+
 Return the address of telemetry data of a match from the match's data
 When the address of telemetry data was not found, the function return <i>None</i>
-    - Argument
-        - <code><b>match_data:dict</b></code> A match data which is obtained from <i>match</i> function
 
-- <img src='https://github.com/ThrypsisJ/pubgapi/blob/main/docs/images/fn_get_telemetry.png?raw=true' height=32px align=center></img>
+<font size=2>
+
+|Argument|Description|
+|---|---|
+|***match_data:dict***|A match data which is obtained from ***match*** function|
+
+</font>
+<br/>
+
+<font size=4>***```get_telemetry(self, addr:str) -> list```***</font>
+
 Return a dictionary-type value containing a match's telemetry data of the target match
 When the request was not successful (the response code was not 200), the function returns <i>None</i>
-    - Argument
-        - <code><b>addr:str</b></code> The address of the target telemetry data obtained from <i>telemetry_addr</i> function
 
-#### 2. Data Wrapper
+<font size=2>
+
+|Argument|Description|
+|---|---|
+|***addr:str***|The address of the target telemetry data obtained from <i>telemetry_addr</i> function|
+
+</font>
+<br/>
+
+### 2. Data Wrapper
 The module contains <b>DataWrapper</b> class, which has functions to get PUBG data from <i>PUBG API</i> as <i>Pandas DataFrame</i> data type
 Since <b>DataWrapper</b> class works based on <b>Collector</b> class, a PUBG API key is also needed to use <b>DataWrapper</b> class
 
-##### Usage
-##### Functions
+#### Usage
+```Python
+import pandas as pd
+from pubgapiku.data_wrapper import DataWrapper
+
+wrapper = DataWrapper(<your_api_key>)
+sample_matches:list = wrapper.get_sample_matches()
+players:pd.DataFrame = wrapper.get_players_in_match(sample_matches[0])
+```
+#### Functions
