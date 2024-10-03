@@ -50,7 +50,7 @@ class Connector:
         Get sample match list
 
         [Arguments]
-        filter  |-> Target date to collect sample matches (YYYYMMDD), optional
+        date_filter  |-> Target date to collect sample match list (optional). Formatted as YYYYMMDD
 
         [Return]
         dict |-> A json response which includes a list of sample matches within

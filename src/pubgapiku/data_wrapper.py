@@ -1,53 +1,56 @@
 """Wrap response data into other data types which are easy to handle"""
+from typing import Literal
 import pandas as pd
 from pubgapiku.api_connector import Connector
 
+PLATFORM = Literal['steam', 'kakao', 'console', 'psn', 'stadia', 'touranment', 'xbox']
+
+# pylint: disable=line-too-long
+
 class DataWrapper():
     """Data wrapper class"""
-    def __init__(self, api_key:str, timeout:int=1):
-        self.conn = Connector(api_key, timeout)
+    def __init__(self, api_key:str, platform:PLATFORM, timeout:int=1):
+        self.conn = Connector(api_key, platform, timeout)
 
-    def get_sample_matches(self) -> list|None:
+    def get_sample_matches(self, date_filter:str='') -> list:
         """
         Get a list of random sample match
 
+        [Arguments]
+        date_filter  |-> Target date to collect sample match list (optional). Formatted as YYYYMMDD
+
         [Return]
         list |-> Successfully extracted matchid list
-        None |-> Fail signal
         """
 
-        data:dict|None = self.conn.sample_matches()
-        if isinstance(data, dict):
-            match_list:list = [
-                item['id'] for item in
-                data['data']['relationships']['matches']['data']
-            ]
-            return match_list
-        else:
-            return None
+        data:dict = self.conn.sample_matches(date_filter)
+        match_list:list = [
+            item['id'] for item in
+            data['data']['relationships']['matches']['data']
+        ]
+        return match_list
 
-    def get_players_in_match(self, match_id:str) -> pd.DataFrame|None:
+    def get_players_in_match(self, match_id:str) -> pd.DataFrame:
         """
-        Get a dataframe containing player names and account ids of a matchß
+        Get a dataframe containing player names and account ids of a match
+
+        [Arguments]
+        match_id:str |-> The target match's id
 
         [Return]
         pd.DataFrame |-> Successfully extracted player info
-        None         |-> Fail signal
         """
 
-        data:dict|None = self.conn.match(match_id)
-        if isinstance(data, dict):
-            player_list:list = [
-                {'accountId': item['attributes']['stats']['playerId'],
-                 'playerName': item['attributes']['stats']['name']}
-                for item in data['included']
-                if item['type'] == 'participant'
-            ]
-            return pd.DataFrame(player_list)
-        else:
-            return None
+        data:dict = self.conn.match(match_id)
+        player_list:list = [
+            {'accountId': item['attributes']['stats']['playerId'],
+                'playerName': item['attributes']['stats']['name']}
+            for item in data['included']
+            if item['type'] == 'participant'
+        ]
+        return pd.DataFrame(player_list)
 
-    def get_player_data(self, **kargs):
+    def get_player_data(self, **kargs) -> pd.DataFrame:
         """
         Get a dataframe containing matches and corresponding players to each match
 
@@ -57,30 +60,26 @@ class DataWrapper():
 
         [Return]
         pd.DataFrame |-> Successfully extracted player-match relations
-        None         |-> Fail signal
         """
 
-        data:dict|None = self.conn.players(**kargs)
-        if isinstance(data, dict):
-            player_datas = []
-            for player in data['data']:
-                player_id = player['id']
-                player_name = player['attributes']['name']
-                player_bantype = player['attributes']['banType']
+        data:dict = self.conn.players(**kargs)
+        player_datas = []
+        for player in data['data']:
+            player_id = player['id']
+            player_name = player['attributes']['name']
+            player_bantype = player['attributes']['banType']
 
-                for match in player['relationships']['matches']['data']:
-                    if match['type'] == 'match':
-                        match_info = {
-                            'accountId': player_id,
-                            'playerName': player_name,
-                            'banType': player_bantype,
-                            'matchId': match['id']
-                        }
-                        player_datas.append(match_info)
-            return pd.DataFrame(player_datas)
-        else:
-            return None
-        
+            for match in player['relationships']['matches']['data']:
+                if match['type'] == 'match':
+                    match_info = {
+                        'accountId': player_id,
+                        'playerName': player_name,
+                        'banType': player_bantype,
+                        'matchId': match['id']
+                    }
+                    player_datas.append(match_info)
+        return pd.DataFrame(player_datas)
+
     def __parse_match(self, match_data:dict) -> tuple[dict, pd.DataFrame]:
         '''
         Parse a metadata and participants data from a match data
@@ -126,11 +125,41 @@ class DataWrapper():
         return meta_data, participants
 
     def __parse_telemetry(self, telemetry_data:list) -> pd.DataFrame:
-        
+        def __parse_event(event_data:dict):
+            event:dict = {}
+            event['type'] = event_data.pop('_T')
+            event['datetime'] = event_data.pop('_D')
 
-    def get_match_data(self, match_id:str) -> tuple[dict, dict]|None:
+            event['actor'] = event_data.pop('accountId', '-')
+            event['subject'] = '-'
+            event['co_actor'] = '-'
+
+            actor_keys = ('character', 'attacker', 'instigator', 'killer', 'reviver')
+            for actor_key in actor_keys:
+                if actor_key in event_data:
+                    event['actor'] = event_data[actor_key]['accountId']
+
+            coactor_keys = ('riders', 'fellowPassengers')
+            for coactor_key in coactor_keys:
+                if coactor_key in event_data:
+                    event['co_actor'] = ','.join([
+                        coactor['account_id'] for coactor in event_data[coactor_key]
+                    ])
+            if 'assists_AccountId' in event_data:
+                event['co_actor'] = ','.join(event_data['assists_AccountId'])
+
+            if 'victim' in event_data:
+                event['subject'] = event_data['victim']['accountId']
+
+            event['contents'] = event_data
+            return event
+
+        events:list = [__parse_event(event_data) for event_data in telemetry_data]
+        return pd.DataFrame(events)
+
+    def get_match_data(self, match_id:str) -> tuple[dict, pd.DataFrame, pd.DataFrame]:
         """
-        Get a tuple of dataframe containing a match's metadata and the address of telemetry file
+        Get a tuple of dataframe containing a match's metadata, participants list, and telemetry data
 
         [Argument]
         match_id:str |-> target match's id
@@ -140,17 +169,10 @@ class DataWrapper():
         None              |-> Fail signal
         """
 
-        match_data:dict|None = self.conn.match(match_id)
-        if isinstance(match_data, dict):
-            telemetry_addr:str|None = self.conn.telemetry_addr(match_data)
-            if not isinstance(telemetry_addr, str):
-                return None
-            
-            telemetry_data:dict|None = self.conn.get_telemetry(telemetry_addr)
-            if not isinstance(telemetry_data, dict):
-                return None
-            
-            meta_data, participants = self.__parse_match(match_data)
-            return , telemetry_data
-        else:
-            return None
+        match_data:dict = self.conn.match(match_id)
+        telemetry_addr:str = self.conn.telemetry_addr(match_data)
+        telemetry_data:list = self.conn.get_telemetry(telemetry_addr)
+
+        meta_data, participants = self.__parse_match(match_data)
+        parsed_telemetry = self.__parse_telemetry(telemetry_data)
+        return meta_data, participants, parsed_telemetry

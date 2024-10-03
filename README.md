@@ -9,108 +9,129 @@ pip install pubgapi-ku
 
 ## Modules
 ### 1. API Connector
-The module contains <b>Connector</b> class which has functions to get raw JSON data using <i>PUBG API</i> provided by <i>PUBG Developer Portal</i> (https://developer.pubg.com/).
-All data which can be collected using this module can also be collected by the <b>DataWrapper</b> class, which provides data as <i>Pandas DataFrame</i> type using <b>Connector</b> class internally.
-Therefore, there is no need to necessarily use <b>API Connector</b> module and <b>Connector</b> class in most cases.
+The module contains **Connector** class which has functions to get raw JSON data using *PUBG API* provided by *PUBG Developer Portal* (https://developer.pubg.com/).
+All data which can be collected using this module can also be collected by the **DataWrapper** class, which provides data as *Pandas DataFrame* type using **Connector** class internally.
+Therefore, there is no need to necessarily use **API Connector** module and **Connector** class in most cases.
 
 #### Usage
-To use <b>Connector</b> class, you must generate a <i>PUBG API key</i>. Refer instruction of <i>PUBG Developer Portal</i> (https://documentation.pubg.com/en/getting-started.html)
+To use Connector class, you must generate a PUBG API key. Refer instruction of PUBG Developer Portal (https://documentation.pubg.com/en/getting-started.html)
 ```Python
 from pubgapiku.api_connector import Connector
 
-conn = Connector(<your_api_key>, <platform>)
+conn = Connector(<your_api_key>, 'steam')
 sample_matches:dict = conn.sample_matches()
 ```
 #### Functions
-<font size=4>***```__init__(self, api_key:str, platform:PLATFORM, timeout:int=1)```***</font>
+> ***\_\_init\_\_*** *(self, api_key:str, platform:PLATFORM, timeout:int=1)*
 
 Initialize API request sender
 
-<font size=2>
+##### Arguments
+***`api_key:str`*** An API key of the PUBG Developer Portal
+***`platform:PLATFORM`*** Target platform to collect data (steam, kakao, console, psn, stadia, tournament, xbox)
+***`timeout:int`*** Timeout limitation (sec), default=1
+&nbsp;
 
-|Argument|Description|
-|---|---|
-|***api_key:str***|An API key of the PUBG Developer Portal|
-|***platform:PLATFORM***|Target platform to collect data (steam, kakao, console, psn, stadia, tournament, xbox)|
-|***timeout:int***|Timeout limitation (sec), default=1|
+> ***sample_matches*** *(self, date_filter:str='') -> dict*
 
-</font>
-<br/>
+Return dictionary-type data containing a list of sample matches within 24 hours in UTC starting from the targeted date
+When the API request is unsuccessful (the response code was not 200), an assertion error will be occurred
 
-<font size=4>***```sample_matches(self) -> dict```***</font>
+##### Arguments
+***`date_filter:str`*** Target date to collect sample match list (optional). Formatted as YYYYMMDD.
+&nbsp;
 
-Return a dictionary(dict)-type containing a list of sample matches within 24 hours in UTC
-When the API request was not successful (the response code was not 200), the function returns <i>None</i>
-<br/>
-
-<font size=4>***```players(self, **kargs) -> dict```***</code></font>
+> ***players*** *(self, \*\*kargs) -> dict*
 
 Return a dictionary-type value containing players information
-When the API request was not successful (the response code was not 200), the function returns <i>None</i>
+When the API request was not successful (the response code was not 200), the function returns None
 
-<font size=2>
+##### Keyword Arguments
+***`ids:list[str]`*** Filters by player ID
+***`names:list[str]`*** Filters by player names
+&nbsp;
 
-|Keyword Argument|Description|
-|---|---|
-|***ids:list[str]***|Filters by player IDs|
-|***names:list[str]***|Filters by player names|
-
-</font>
-<br/>
-
-<font size=4>***```match(self, match_id:str) -> dict```***</font>
+> ***match*** *(self, match_id:str) -> dict*
 
 Return a dictionary-type value containing a match's information
-When the API request was not successful (the response code was not 200), the function returns <i>None</i>
+When the API request was not successful (the response code was not 200), the function returns None
 
-<font size=2>
+##### Arguments
+***`match_id:str`*** The ID of the match for which you want to collect information
+&nbsp;
 
-|Argument|Description|
-|---|---|
-|***match_id:str***|The ID of the match for which you want to collect information|
-
-</font>
-<br/>
-
-<font size=4>***```telemetry_addr(self, match_data:dict) -> str```***</font>
+> ***telemetry_addr*** *(self, match_data:dict) -> str*
 
 Return the address of telemetry data of a match from the match's data
-When the address of telemetry data was not found, the function return <i>None</i>
+When the address of telemetry data was not found, the function return None
 
-<font size=2>
+##### Arguments
+***`match_data:dict`*** A match data which is obtained from ***match*** function
+&nbsp;
 
-|Argument|Description|
-|---|---|
-|***match_data:dict***|A match data which is obtained from ***match*** function|
-
-</font>
-<br/>
-
-<font size=4>***```get_telemetry(self, addr:str) -> list```***</font>
+> ***get_telemetry*** *(self, addr:str) -> list*
 
 Return a dictionary-type value containing a match's telemetry data of the target match
-When the request was not successful (the response code was not 200), the function returns <i>None</i>
+When the request was not successful (the response code was not 200), the function returns None
 
-<font size=2>
+##### Arguments
+***`addr:str`*** The address of the target telemetry data obtained from telemetry_addr function
+&nbsp;
 
-|Argument|Description|
-|---|---|
-|***addr:str***|The address of the target telemetry data obtained from <i>telemetry_addr</i> function|
-
-</font>
-<br/>
-
+---
 ### 2. Data Wrapper
-The module contains <b>DataWrapper</b> class, which has functions to get PUBG data from <i>PUBG API</i> as <i>Pandas DataFrame</i> data type
-Since <b>DataWrapper</b> class works based on <b>Collector</b> class, a PUBG API key is also needed to use <b>DataWrapper</b> class
+The module contains **DataWrapper** class, which has functions to get PUBG data from *PUBG API* as *Pandas DataFrame* data type
+Since **DataWrapper** class works based on **Collector** class, a PUBG API key is also needed to use **DataWrapper** class
 
 #### Usage
 ```Python
 import pandas as pd
 from pubgapiku.data_wrapper import DataWrapper
 
-wrapper = DataWrapper(<your_api_key>)
+wrapper = DataWrapper(<your_api_key>, 'steam')
 sample_matches:list = wrapper.get_sample_matches()
 players:pd.DataFrame = wrapper.get_players_in_match(sample_matches[0])
 ```
 #### Functions
+> ***\_\_init\_\_*** *(self, api_key:str, platform:PLATFORM, timeout:int=1)*
+
+Initialize a data wrapper instance, which contains a **Connector** instance
+
+##### Arguments
+***`api_key:str`*** An API key of the PUBG Developer Portal
+***`platform:PLATFORM`*** Target platform to collect data (steam, kakao, console, psn, stadia, tournament, xbox)
+***`timeout:int`*** Timeout limitation (sec), default=1
+&nbsp;
+
+> ***get_sample_matches*** *(self, date_filter:str='') -> list*
+
+Return a list of sample matches within 24 hours in UTC starting from the targeted date
+
+##### Arguments
+***`date_filter:str`*** Target date to collect sample match list (optional). Formatted as YYYYMMDD.
+&nbsp;
+
+> ***get_players_in_match*** *(self, match_id:str) -> pd.DataFrame*
+
+Get a dataframe containing player names and account ids of a match
+
+##### Arguments
+***`match_id:str`*** The target match's id
+&nbsp;
+
+> ***get_player_data*** *(self, \*\*kargs) -> pd.DataFrame*
+
+Get a dataframe containing matches and corresponding players to each match
+
+##### Keyword Arguments
+***`ids:list[str]`*** filters by player IDs
+***`names:list[str]`*** filters by player names
+&nbsp;
+
+> ***get_match_data*** *(self, match_id:str) -> tuple[dict, pd.DataFrame, pd.DataFrame]*
+
+Get a tuple of dataframe containing a match's metadata, participants list, and telemetry data
+
+##### Arguments
+***`match_id:str`*** target match's id
+&nbsp;
