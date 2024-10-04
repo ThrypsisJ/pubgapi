@@ -53,6 +53,8 @@ Initialize API request sender.
 
 Return dictionary-type data containing a list of sample matches within 24 hours in UTC starting from the targeted date.   
 When the API request is unsuccessful (the response code was not 200), an assertion error will be occurred.   
+   
+*The use of this function is subject to the request rate limitation of your PUGB Developer Portal account.*   
 
 ##### Arguments
 ***`date_filter:str`*** Target date to collect sample match list (optional). Formatted as YYYYMMDD   
@@ -62,6 +64,8 @@ When the API request is unsuccessful (the response code was not 200), an asserti
 
 Return a dictionary-type value containing players information.   
 When the API request was not successful (the response code was not 200), an assertion error will be occurred.   
+   
+*The use of this function is subject to the request rate limitation of your PUGB Developer Portal account.*   
 
 ##### Keyword Arguments
 ***`ids:list[str]`*** Filters by player ID   
@@ -123,6 +127,8 @@ Initialize a data wrapper instance, which contains a **Connector** instance.
 > ***get_sample_matches*** *(self, date_filter:str='') -> list*
 
 Return a list of sample matches within 24 hours in UTC starting from the targeted date.   
+   
+*The use of this function is subject to the request rate limitation of your PUGB Developer Portal account.*   
 
 ##### Arguments
 ***`date_filter:str`*** Target date to collect sample match list (optional). Formatted as YYYYMMDD   
@@ -131,6 +137,8 @@ Return a list of sample matches within 24 hours in UTC starting from the targete
 > ***get_players_in_match*** *(self, match_id:str) -> pd.DataFrame*
 
 Get a dataframe containing player names and account ids of a match.   
+   
+*The use of this function is subject to the request rate limitation of your PUGB Developer Portal account.*   
 
 ##### Arguments
 ***`match_id:str`*** The target match's id   
@@ -138,7 +146,9 @@ Get a dataframe containing player names and account ids of a match.
 
 > ***get_player_data*** *(self, \*\*kargs) -> pd.DataFrame*
 
-Get a dataframe containing matches and corresponding players to each match.   
+Get a dataframe containing list of players and matches they played.   
+   
+*The use of this function is subject to the request rate limitation of your PUGB Developer Portal account.*   
 
 ##### Keyword Arguments
 ***`ids:list[str]`*** filters by player IDs   

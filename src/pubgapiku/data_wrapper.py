@@ -52,7 +52,7 @@ class DataWrapper():
 
     def get_player_data(self, **kargs) -> pd.DataFrame:
         """
-        Get a dataframe containing matches and corresponding players to each match
+        Get a dataframe containing list of players and matches they played
 
         [Keyword arguments]
         ids:list[str]   |-> filters by player IDs
