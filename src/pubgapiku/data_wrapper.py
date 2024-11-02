@@ -161,19 +161,24 @@ class DataWrapper():
         events:list = [__parse_event(event_data) for event_data in telemetry_data]
         return pd.DataFrame(events)
 
-    def get_match_data(self, match_id:str) -> tuple[dict, pd.DataFrame, pd.DataFrame]:
+    def get_match_data(self, match_id:str, **kargs) -> tuple[dict, pd.DataFrame, pd.DataFrame]:
         """
         Get a tuple of dataframe containing a match's metadata, participants list, and telemetry data
 
-        [Argument]
-        match_id:str |-> target match's id
+        [Arguments]
+        match_id:str   |-> target match's id
+
+        [Keyword Arguments]
+        mode:list[str] |-> filter for the gamemode (refer https://github.com/pubg/api-assets/blob/master/dictionaries/gameMode.json)
 
         [Return]
         tuple[dict, dict] |-> Successfully acquired match and telemetry data
-        None              |-> Fail signal
         """
 
-        match_data:dict = self.conn.match(match_id)
+        match_data:dict = self.conn.match(match_id, **kargs)
+        if len(match_data) == 0:
+            return {}, pd.DataFrame([]), pd.DataFrame([])
+
         telemetry_addr:str = self.conn.telemetry_addr(match_data)
         telemetry_data:list = self.conn.get_telemetry(telemetry_addr)
 

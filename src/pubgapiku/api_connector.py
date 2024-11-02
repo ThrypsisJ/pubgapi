@@ -5,6 +5,8 @@ import requests
 
 PLATFORM = Literal['steam', 'kakao', 'console', 'psn', 'stadia', 'touranment', 'xbox']
 
+# pylint: disable=line-too-long
+
 class Connector:
     """API Request sender class"""
     def __init__(self, api_key:str, platform:PLATFORM, timeout:int=1):
@@ -101,15 +103,18 @@ class Connector:
         assert isinstance(output, dict), self.__chk_cls_str(output, dict)
         return output
 
-    def match(self, match_id:str) -> dict:
+    def match(self, match_id:str, **kargs) -> dict:
         """
         Get a match's information
 
         [Argument]
         match_id:str |-> target match's ID
 
+        [Keyword Arguments]
+        mode:list[str] |-> filter for the gamemode (refer https://github.com/pubg/api-assets/blob/master/dictionaries/gameMode.json)
+
         [Return]
-        dict |-> A json response which includes target match's information
+        dict |-> A json response which includes target match's information (if the data doesn't satisfy the filter, return value will be an empty dict)
         """
         api = self.api_base + f'/matches/{match_id}'
         response:requests.Response = requests.get(
@@ -117,6 +122,13 @@ class Connector:
         )
         output = self.__chk_err(response)
         assert isinstance(output, dict), self.__chk_cls_str(output, dict)
+
+        # mode filter: when the extracted game mode is not satisfy the filter, return tuple of empty dict and dataframes
+        if ('mode' in kargs) and (len(kargs['mode']) > 0):
+            mode = output['data']['attributes']['gameMode']
+            if not mode in kargs['mode']:
+                return {}
+
         return output
 
     def telemetry_addr(self, match_data:dict) -> str:

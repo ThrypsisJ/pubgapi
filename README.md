@@ -79,6 +79,9 @@ When the API request was not successful (the response code was not 200), an asse
 
 ##### Arguments
 ***`match_id:str`*** The ID of the match for which you want to collect information   
+
+##### Keyword Arguments
+***`mode:list[str]`*** filter for the gamemode (refer https://github.com/pubg/api-assets/blob/master/dictionaries/gameMode.json)    
 &nbsp;
 
 > ***telemetry_addr*** *(self, match_data:dict) -> str*
@@ -161,4 +164,7 @@ Get a tuple of dataframe containing a match's metadata, participants list, and t
 
 ##### Arguments
 ***`match_id:str`*** target match's id   
+
+##### Keyword Arguments
+***`mode:list[str]`*** filter for the gamemode (refer https://github.com/pubg/api-assets/blob/master/dictionaries/gameMode.json)    
 &nbsp;
